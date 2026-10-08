@@ -1,0 +1,79 @@
+\documentclass{article}
+\usepackage{blindtext}
+\usepackage{multicol}
+\title{Útvonalfeldolgozási megoldások napjainkban}
+\author{Csuport Ákos \\ email {ckcbs0@inf.elte.hu}}
+\affil[1]{Eötvös Loránd Tudományegyetem Informatikai Kar}
+\date{2026. 10. 07.}
+
+\begin{document}
+\maketitle
+
+\begin{multicols}{2}
+[
+\section{Bevezetés}
+]
+Az útvonalak elemzése az informatikában egy különösen aktív terület. Számos algoritmus és módszer jelent meg megtett útvonalak
+különböző fajtájú feldolgozására: összegzés, klasszifikáció, predikció, stb. \cite{hussein2026kafy}
+
+Indokolhatja a terület felkapottságát, hogy számos területen, főleg olyanokon, amelyek valamilyen módon a közlekedési infrastruktúrát érintik,
+szükség van útvonaladatok összegzésére, összehasonlítására, következő lépések megjóslására, \cite{fang2021mdtp} vagy tervezés alatt lévő megoldások esetén előzetes forgalmi modellek 
+létrehozására a még nem kivitelezett hálózatokon \cite{hussein2026kafy}. Ilyenek többek közt a településfejlesztés \cite{zhou2024red} \cite{hussein2026kafy}, útvonaltervezési szolgáltatások \cite{hussein2026kafy} vagy a közlekedésszervezés 
+optimalizációja \cite{zhou2024red}.
+
+Eleinte az utak feldolgozására gyakorta használtak olyan tradicionális gépi tanulási technikákat, mint a probabilisztikus modellek, 
+bayes-i hálózatok, vagy a \textit{k} legközelebbi szomszéd algoritmusa \cite{fang2021mdtp}. A neurális hálók megjelenését követően ezek legkülönbözőbb változatait
+lett szokásos felhasználni útvonalelemzésekhez \cite{hussein2026kafy} \cite{zhou2024red} \cite{fang2021mdtp}.
+
+Az útvonalak, illetve szegmenseinek vektorokba történő beágyazását, és neuronhálókkal történő feldolgozását útvonalreprezentációs
+tanulásnak (\textit{TRL, Trajectory Representation Learning}) szokás hívni \cite{zhou2024red}. Az ilyen megoldások mögött többnyire rekurrens neuronhálók
+állnak, de egyes kivitelezésekben a transzformer modellt is alkalmazzák. \cite{zhou2024red} Ez a megoldás népszerű és hatékony bizonyos útvonalakkal kapcsolatos
+elemzések végrehajtására, de a TRL megoldások jellemzően csak bizonyos feladattípusok megoldására jók (hasonlóság, útvonalak klasszifikációja,
+útvonalak úthálózatra igazítása) \cite{hussein2026kafy} \cite{zhou2024red}, így ezen a megközelítésen kívül is bőven van helye útvonalelemzési technikáknak. Ebbe beletartoznak
+gráfok feldolgozására szolgáló konvolúciós hálók \cite{fang2021mdtp}, illetve a TRL-nél már említett transzformer modell \cite{vaswani2017attention} erős és utóbbi időben nagy nyelvi
+modellekhez gyakran alkalmazott természetes nyelvfeldolgozásra való rátermettségének felhasználása az útvonalak nyelvként történő formalizálásával,
+ami bemenetként használható.
+
+\section{Kapcsolódó művek}
+
+Mivel az útvonalak feldolgozása egy kellőképp aktív téma, számos cikk foglalkozott vele akár csak az utóbbi években is \cite{hussein2026kafy}. A RED \cite{zhou2024red}
+(\textit{Road-aware masking strategy, Embedding, Dual-objective task learning}) egy önfelügyelő tanulást alkalmazó, transzformer modellre
+épülő TRL-keretrendszer. Mint a többi TRL megközelítés, az útvonalak egyes szegmenseit vektorokba ágyazza, az úthálózatra illeszti a
+megtett útról gyűjtött helyadatokat, és két feladattal tanítja magát: a RED transzformere az útvonal következő szegmenseit próbálja előre eltalálni, 
+a dekóder pedig a teljes útvonalakat rekonstruálja. \cite{zhou2024red}
+
+A betanított modell számos feladatra képes, amit egy TRL megoldás nyújthat. Az útvonalreprezentációs tanulás lehetőségeit kihasználva
+az útvonalak olyan szempontjai szerint is képes hasonlítást, klasszifikációt és predikciót végezni, melyet legfeljebb egy-két
+vetélytárs tud a kategóriában. Ebbe beletartozik az útvonalak nemcsak térbeli, hanem időbeli elemzése is, valamint az útvonalak felhasználókhoz is társítva
+vannak, ezáltal felhasználói preferenciákat is képes kimutatni a keretrendszer. Az eredmények alapján a RED a legtöbb esetben több mint 5%-kal 
+javítja a legjobb baseline módszer által elért pontosságot \cite{zhou2024red}.
+
+Éppen a TRL modellek korlátozásainak átlépésére készült egy másik technika, a KAFY \cite{hussein2026kafy}. A KAFY a RED-hez hasonlít annyiban, hogy időben és térben is képes útvonalakat feldolgozni,
+ráadásul szintén felhasználja a transzformer modellt, viszont az útvonal szegmenseinek vektorokba ágyazása helyett az útvonalakat egy nyelvként \cite{devlin2018bert} kódolja, majd (emberi nyelven
+még nem betanított) transzformereket használ fel. Ennek célja a transzformer modell teljesítményének kihasználása a nyelvfeldolgozásban, amit olyan rendszerek, mint a BERT \cite{devlin2018bert}
+vagy a GPT \cite{yenduri2023generative} korábban már demonstráltak. Maga a kialakított nyelv az útvonalak és emberi nyelveken kifejezett szövegek közti
+megfeleltetésekre épül: a nyelv különböző nyelvi elemek (pl. szavak) sorozata, az útvonal pedig koordináták sorozata. Egy szövegben,
+hogy értelmezhessük, a nyelvi elemek kapcsolatainak szemantikailag helyesnek kell lenniük, hasonlóképp van az útvonal egyes pontjain
+készült tér- és időbeli pontok szemantikát alkotnak. Így, míg a TRL rendszereknél előre meghatározott, legtöbbször egy vagy néhány,
+feladatra betanított neuronhálók vannak a modellhez szorosan kötődő vektorbeágyazással, a KAFY egy általános, NLP-ben használatoshoz
+hasonló tokensorozatot készít az útvonalakból, amit a KAFY-ban demonstrált három transzformer (BERT, GPT-2 és T-5) öt feladatot
+lát el: összegzés, predikció, útvonal-generálás, imputáció és klasszifikáció \cite{hussein2026kafy}, azonban a KAFY moduláris és kiegészíthető további, egyedileg
+hangolt transzformerrel, melyek általánosan fel tudják dolgozni az útvonalat reprezentáló tokensorozatot.
+
+Egy harmadik útvonalfeldolgozási modell, az MDTP (\textit{Multi-source Deep Traffic Prediction Framework}) \cite{fang2021mdtp} az eddigi említett
+megközelítésekkel ellentétben a vizsgált területet régiókra bontja, amik gráfot alkotnak, és a köztük haladó éleken van reprezentálva
+a köztük haladó forgalom fajtája (pl. taxi, kerékpár) és mennyisége, időintervallumokra leosztva. Az MDTP korrelációkat mutat ki időszak
+és járműtípus szempontjából a különböző régiók közti forgalomban, erre tartalmaz egy komponenst, mely vizualizálja az adatokat,
+illetve az eltelt időintervallumok alapján becsli a következő intervallumban lebonyolodó forgalmat \cite{fang2021mdtp}. Ehhez egy gráfkonvolúciós hálót
+használ (GCN), ami jó választás egy térben rögzített területen a forgalom régiók közti lebonyolódásának elemzésére \cite{fang2021mdtp}.
+
+\end{multicols}
+
+\end{document}
+
+[1] - RED
+[2] - KAFY
+[3] - MDTP
+[4] - Transformer
+[5] - BERT
+[6] - GPT
